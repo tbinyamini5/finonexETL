@@ -77,7 +77,7 @@ async function readRevenueByUserId(userId) {
 async function upsertUserRevenue(userId, revenue) {
   try {
     const { revenue: persistedRevenue } = await readRevenueByUserId(userId);
-    const newRevenue = persistedRevenue + revenue;
+    const newRevenue = (persistedRevenue ?? 0) + revenue;
 
     await pool.query(
       `INSERT INTO users_revenue (user_id, revenue) 
@@ -99,7 +99,7 @@ function calculateRevenuePerUser(data) {
   if (!data) {
     return;
   }
-  
+
   return data.reduce((acc, item) => {
     const { userId, value, name } = item;
     const currentRevenue = acc.get(userId) || 0;
@@ -125,6 +125,7 @@ function updateUsersRevenues(revenuePerUserMap) {
   try {
     const data = await readDataFile();
     const revenuePerUserMap = calculateRevenuePerUser(data);
+    console.log({ revenuePerUserMap });
     updateUsersRevenues(revenuePerUserMap);
   } catch (error) {
     console.error("Eror calculating the revenue", error);

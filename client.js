@@ -18,7 +18,6 @@ async function sendEvent(event) {
     const headers = {
       Authorization: `secret`,
     };
-    console.log(event);
     const response = await axios.post(`${apiBaseUrl}/liveEvent`, event, {
       headers,
     });
